@@ -1,0 +1,55 @@
+# -d is the detached mode so once the postgres database is running you can still use the bash terminal
+docker run -it  \
+  --name taxi_data \
+  --network=homework \
+  -e POSTGRES_USER=root \
+  -e POSTGRES_PASSWORD=root \
+  -e POSTGRES_DB=homework \
+  -v ny_taxi_postgres_data:/var/lib/postgresql \
+  -p 5432:5432 \
+  postgres
+
+# the alternative of $(pwd)/data is ny_taxi_postgres_data, now this ny_taxi
+# is a Docker named volume that Docker manages for you
+# or -d postgres, but I'm not a big fan of detached mode
+
+# command to connect to postgres database using pgcli in virtual env
+uv run pgcli -h localhost -p 5432 -u root -d homework
+
+# now I need to upload the parquet and csv files to the database
+# I will use pandas to read the files and then to_sql to upload them to the database
+# first I need Jupyter notebook to write python and interpret python code
+uv add notebook
+
+# convert the jupyter notebook to script
+uv run jupyter nbconvert --to script upload_data.ipynb
+
+# run the script to upload data to the database
+uv run python upload_data.py
+
+# check whether the data is uploaded to the database
+\dt 
+
+# run some simple sql queries to check the data
+SELECT COUNT(*) FROM yellow_taxi_data;
+
+# after using click to parse arguments in the command line, I tried to run this to make sure the script with click still works
+uv run python upload_data.py \
+  --username=root \
+  --password=root \
+  --host=localhost \
+  --port=5432 \
+  --db=homework
+
+# dockerize the python script with all the dependencies
+# and run the docker container to upload data to the database with network specfied 
+docker run -it  \
+  --network=homework \
+  taxi_data_upload \
+  --username=root \
+  --password=root \
+  --host=taxi_data \
+  --port=5432 \
+  --db=homework
+
+# 
