@@ -16,12 +16,13 @@ WORKDIR /code
 # This ensures that all commands use the virtual environment’s Python and packages automatically.
 # $PATH appends the new path to all the existing paths so that the executables in other
 # paths can still be found if the new path does not contain them.
+# : is used to separate different paths
 ENV PATH="/code/.venv/bin:$PATH"
 
 COPY pyproject.toml .python-version uv.lock .
 
 # Install dependencies from lock file (ensures reproducible builds)
-# and create a virtual environment in .venv directory
+# and create a virtual environment in the /code/.venv directory
 RUN uv sync --locked  
 
 # copy the python script into the /code directory in the container
