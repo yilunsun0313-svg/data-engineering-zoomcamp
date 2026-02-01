@@ -34,6 +34,16 @@ tasks:
     commands:
       - wget -qO- https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{{inputs.taxi}}/{{render(vars.file)}}.gz | gunzip > {{render(vars.file)}}
 
+  # - id: check_size
+  #   type: io.kestra.plugin.scripts.python.Script
+  #   containerImage: python:3.11-slim
+  #   script: |
+  #     import os
+  #     file_path = "{{ outputs.extract.outputFiles[inputs.taxi ~ '_tripdata_' ~ (trigger.date | date('yyyy-MM')) ~ '.csv'] }}"
+  #     file_size = os.path.getsize(file_path)
+  #     print(f"The file size is: {file_size} bytes")
+
+
   - id: upload_to_gcs
     type: io.kestra.plugin.gcp.gcs.Upload
     from: "{{render(vars.data)}}"
