@@ -9,3 +9,4 @@ sources:
       - name: green_tripdata
       - name: yellow_tripdata
       - name: data_test
+      - name: fhv_tripdata
