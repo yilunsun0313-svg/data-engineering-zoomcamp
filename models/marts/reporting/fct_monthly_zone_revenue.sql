@@ -24,4 +24,3 @@ select
 from {{ ref('fct_trips') }}
 group by pickup_zone, revenue_month, service_type
 
-
